@@ -1,0 +1,92 @@
+// --------------------------------------------------
+// font size
+
+@function calculate-rem($size) {
+  $rem-size: $size / 16px;
+  @return $rem-size * 1rem;
+}
+
+@mixin font-size($size) {
+  font-size: calculate-rem($size);
+}
+
+// --------------------------------------------------
+// svg background image
+
+$image-path: '{{ asset_url }}' !default;
+
+@mixin background-svg($name, $size: false) {
+  background-image: url( #{'{{ "#{$name}.svg" | asset_url }}'} );
+
+  @if ($size) {
+    background-size: $size;
+  }
+}
+
+// --------------------------------------------------
+// fonts
+
+//scss-lint:disable all
+@mixin font-file($asset-font-name) {
+  src: url('{{ "#{$asset-font-name}.eot" | asset_url }}');
+  src: url('{{ "#{$asset-font-name}.eot" | asset_url }}?#iefix') format("embedded-opentype"),
+    url('{{ "#{$asset-font-name}.woff" | asset_url }}') format("woff"),
+    url('{{ "#{$asset-font-name}.ttf" | asset_url }}') format("truetype"),
+    url('{{ "#{$asset-font-name}.svg" | asset_url }}') format("svg");
+}
+//scss-lint:enable all
+
+// --------------------------------------------------
+// aspect ratio
+// e.g. @include aspect-ratio(16,9);
+// expects child to have class of `.content` (could be replaced with a wildcard `*`)
+
+@mixin aspect-ratio($width, $height) {
+  position: relative;
+
+  &::before {
+    content: '';
+    display: block;
+    padding-top: ($height / $width) * 100%;
+    width: 100%;
+  }
+
+  > .content {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+}
+
+// --------------------------------------------------
+// links
+
+@mixin make-link($normal: $link-color, $hover: $link-hover-color, $active: $link-active-color) {
+  color: $normal;
+
+  &:hover {
+    color: $hover;
+  }
+
+  &:active {
+    color: $active;
+  }
+}
+
+// --------------------------------------------------
+// viewport height fix
+// this fixes issue where address bar in touch devices messes `vh` up
+
+//scss-lint:disable all
+@mixin vh-height-min($height: 100) {
+  min-height: #{$height}vh; // fallback for browsers that do not support Custom Props
+  min-height: calc(var(--vh) * #{$height});
+}
+
+@mixin vh-height($height: 100) {
+  height: #{$height}vh; // fallback for browsers that do not support Custom Props
+  height: calc(var(--vh) * #{$height});
+}
+//scss-lint:enable all
